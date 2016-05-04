@@ -1284,3 +1284,20 @@ class SCM(jenkins_jobs.modules.base.Base):
                     pass
 
             xml_parent.append(scms_parent)
+
+
+class PipelineSCM(jenkins_jobs.modules.base.Base):
+    sequence = 30
+
+    component_type = 'pipeline-scm'
+    component_list_type = 'pipeline-scm'
+
+    def gen_xml(self, xml_parent, data):
+        definition_parent = xml_parent.find('definition')
+        pipeline_dict = data.get(self.component_type, {})
+        scm = pipeline_dict.get('scm')
+        if scm:
+            self.registry.dispatch('scm', definition_parent, scm)
+            XML.SubElement(definition_parent, 'scriptPath'
+                           ).text = pipeline_dict.get('script-path',
+                                                      'Jenkinsfile')
