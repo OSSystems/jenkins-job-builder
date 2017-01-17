@@ -681,7 +681,13 @@ def rvm_env(registry, xml_parent, data):
     rpo = XML.SubElement(xml_parent,
                          'ruby-proxy-object')
 
-    ro_class = "Jenkins::Plugin::Proxies::BuildWrapper"
+    plugin_info = registry.get_plugin_info("Rvm")
+    version = pkg_resources.parse_version(plugin_info.get("version", "0.5"))
+    if version <= pkg_resources.parse_version("0.4"):
+        ro_class = "Jenkins::Plugin::Proxies::BuildWrapper"
+    else:
+        ro_class = "Jenkins::Tasks::BuildWrapperProxy"
+
     ro = XML.SubElement(rpo,
                         'ruby-object',
                         {'ruby-class': ro_class,
